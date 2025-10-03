@@ -25,14 +25,15 @@ const (
 )
 
 type ApplicationConfiguration struct {
-	state                protoimpl.MessageState    `protogen:"open.v1"`
-	PrometheusHttpClient *client.Configuration     `protobuf:"bytes,5,opt,name=prometheus_http_client,json=prometheusHttpClient,proto3" json:"prometheus_http_client,omitempty"`
-	PrometheusEndpoint   string                    `protobuf:"bytes,1,opt,name=prometheus_endpoint,json=prometheusEndpoint,proto3" json:"prometheus_endpoint,omitempty"`
-	PrometheusQuery      string                    `protobuf:"bytes,2,opt,name=prometheus_query,json=prometheusQuery,proto3" json:"prometheus_query,omitempty"`
-	NodeGroups           []*NodeGroupConfiguration `protobuf:"bytes,3,rep,name=node_groups,json=nodeGroups,proto3" json:"node_groups,omitempty"`
-	AwsSession           *aws.SessionConfiguration `protobuf:"bytes,4,opt,name=aws_session,json=awsSession,proto3" json:"aws_session,omitempty"`
-	unknownFields        protoimpl.UnknownFields
-	sizeCache            protoimpl.SizeCache
+	state                    protoimpl.MessageState    `protogen:"open.v1"`
+	PrometheusHttpClient     *client.Configuration     `protobuf:"bytes,5,opt,name=prometheus_http_client,json=prometheusHttpClient,proto3" json:"prometheus_http_client,omitempty"`
+	PrometheusEndpoint       string                    `protobuf:"bytes,1,opt,name=prometheus_endpoint,json=prometheusEndpoint,proto3" json:"prometheus_endpoint,omitempty"`
+	PrometheusQuery          string                    `protobuf:"bytes,2,opt,name=prometheus_query,json=prometheusQuery,proto3" json:"prometheus_query,omitempty"`
+	NodeGroups               []*NodeGroupConfiguration `protobuf:"bytes,3,rep,name=node_groups,json=nodeGroups,proto3" json:"node_groups,omitempty"`
+	AwsSession               *aws.SessionConfiguration `protobuf:"bytes,4,opt,name=aws_session,json=awsSession,proto3" json:"aws_session,omitempty"`
+	ExecutionIntervalSeconds int32                     `protobuf:"varint,6,opt,name=execution_interval_seconds,json=executionIntervalSeconds,proto3" json:"execution_interval_seconds,omitempty"`
+	unknownFields            protoimpl.UnknownFields
+	sizeCache                protoimpl.SizeCache
 }
 
 func (x *ApplicationConfiguration) Reset() {
@@ -100,12 +101,20 @@ func (x *ApplicationConfiguration) GetAwsSession() *aws.SessionConfiguration {
 	return nil
 }
 
+func (x *ApplicationConfiguration) GetExecutionIntervalSeconds() int32 {
+	if x != nil {
+		return x.ExecutionIntervalSeconds
+	}
+	return 0
+}
+
 type EKSManagedNodeGroupConfiguration struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ClusterName   string                 `protobuf:"bytes,1,opt,name=cluster_name,json=clusterName,proto3" json:"cluster_name,omitempty"`
-	NodeGroupName string                 `protobuf:"bytes,2,opt,name=node_group_name,json=nodeGroupName,proto3" json:"node_group_name,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                  protoimpl.MessageState `protogen:"open.v1"`
+	ClusterName            string                 `protobuf:"bytes,1,opt,name=cluster_name,json=clusterName,proto3" json:"cluster_name,omitempty"`
+	NodeGroupName          string                 `protobuf:"bytes,2,opt,name=node_group_name,json=nodeGroupName,proto3" json:"node_group_name,omitempty"`
+	SecondaryNodeGroupName string                 `protobuf:"bytes,3,opt,name=secondary_node_group_name,json=secondaryNodeGroupName,proto3" json:"secondary_node_group_name,omitempty"`
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *EKSManagedNodeGroupConfiguration) Reset() {
@@ -148,6 +157,13 @@ func (x *EKSManagedNodeGroupConfiguration) GetClusterName() string {
 func (x *EKSManagedNodeGroupConfiguration) GetNodeGroupName() string {
 	if x != nil {
 		return x.NodeGroupName
+	}
+	return ""
+}
+
+func (x *EKSManagedNodeGroupConfiguration) GetSecondaryNodeGroupName() string {
+	if x != nil {
+		return x.SecondaryNodeGroupName
 	}
 	return ""
 }
@@ -354,7 +370,7 @@ var File_github_com_buildbarn_bb_autoscaler_pkg_proto_configuration_bb_autoscale
 
 const file_github_com_buildbarn_bb_autoscaler_pkg_proto_configuration_bb_autoscaler_bb_autoscaler_proto_rawDesc = "" +
 	"\n" +
-	"\\github.com/buildbarn/bb-autoscaler/pkg/proto/configuration/bb_autoscaler/bb_autoscaler.proto\x12%buildbarn.configuration.bb_autoscaler\x1a6build/bazel/remote/execution/v2/remote_execution.proto\x1aKgithub.com/buildbarn/bb-storage/pkg/proto/configuration/cloud/aws/aws.proto\x1aPgithub.com/buildbarn/bb-storage/pkg/proto/configuration/http/client/client.proto\"\x9a\x03\n" +
+	"\\github.com/buildbarn/bb-autoscaler/pkg/proto/configuration/bb_autoscaler/bb_autoscaler.proto\x12%buildbarn.configuration.bb_autoscaler\x1a6build/bazel/remote/execution/v2/remote_execution.proto\x1aKgithub.com/buildbarn/bb-storage/pkg/proto/configuration/cloud/aws/aws.proto\x1aPgithub.com/buildbarn/bb-storage/pkg/proto/configuration/http/client/client.proto\"\xd8\x03\n" +
 	"\x18ApplicationConfiguration\x12h\n" +
 	"\x16prometheus_http_client\x18\x05 \x01(\v22.buildbarn.configuration.http.client.ConfigurationR\x14prometheusHttpClient\x12/\n" +
 	"\x13prometheus_endpoint\x18\x01 \x01(\tR\x12prometheusEndpoint\x12)\n" +
@@ -362,10 +378,12 @@ const file_github_com_buildbarn_bb_autoscaler_pkg_proto_configuration_bb_autosca
 	"\vnode_groups\x18\x03 \x03(\v2=.buildbarn.configuration.bb_autoscaler.NodeGroupConfigurationR\n" +
 	"nodeGroups\x12X\n" +
 	"\vaws_session\x18\x04 \x01(\v27.buildbarn.configuration.cloud.aws.SessionConfigurationR\n" +
-	"awsSession\"m\n" +
+	"awsSession\x12<\n" +
+	"\x1aexecution_interval_seconds\x18\x06 \x01(\x05R\x18executionIntervalSeconds\"\xa8\x01\n" +
 	" EKSManagedNodeGroupConfiguration\x12!\n" +
 	"\fcluster_name\x18\x01 \x01(\tR\vclusterName\x12&\n" +
-	"\x0fnode_group_name\x18\x02 \x01(\tR\rnodeGroupName\"\xab\x01\n" +
+	"\x0fnode_group_name\x18\x02 \x01(\tR\rnodeGroupName\x129\n" +
+	"\x19secondary_node_group_name\x18\x03 \x01(\tR\x16secondaryNodeGroupName\"\xab\x01\n" +
 	"!KubernetesDeploymentConfiguration\x12\x1c\n" +
 	"\tnamespace\x18\x01 \x01(\tR\tnamespace\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12)\n" +

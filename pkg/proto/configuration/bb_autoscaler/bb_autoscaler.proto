@@ -49,6 +49,14 @@ message ApplicationConfiguration {
   // when 'node_groups' contains one or more entries for AWS EC2 Auto
   // Scaling Groups (ASGs) or EKS Managed Node Groups.
   buildbarn.configuration.cloud.aws.SessionConfiguration aws_session = 4;
+
+  // Interval in seconds at which the autoscaler should execute. When set
+  // to a positive value, the autoscaler will run indefinitely, executing
+  // the autoscaling logic at this interval. If not set or set to zero,
+  // the autoscaler runs once and exits (suitable for running as a cron job).
+  //
+  // Example: 300 for 5 minutes
+  int32 execution_interval_seconds = 6;
 }
 
 message EKSManagedNodeGroupConfiguration {
@@ -57,6 +65,10 @@ message EKSManagedNodeGroupConfiguration {
 
   // Name of the managed node group in the EKS cluster.
   string node_group_name = 2;
+
+  // Optional: Secondary node group that scales up to fill capacity gaps
+  // when the primary has health issues (e.g., spot capacity shortage).
+  string secondary_node_group_name = 3;
 }
 
 message KubernetesDeploymentConfiguration {

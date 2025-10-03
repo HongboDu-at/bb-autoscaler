@@ -3,13 +3,17 @@ load("@rules_go//go:def.bzl", "go_binary", "go_library")
 
 go_library(
     name = "bb_autoscaler_lib",
-    srcs = ["main.go"],
+    srcs = [
+        "autoscaler.go",
+        "main.go",
+    ],
     importpath = "github.com/buildbarn/bb-autoscaler/cmd/bb_autoscaler",
     visibility = ["//visibility:private"],
     deps = [
         "//pkg/autoscaler",
         "//pkg/proto/configuration/bb_autoscaler",
         "@com_github_aws_aws_sdk_go_v2_service_autoscaling//:autoscaling",
+        "@com_github_aws_aws_sdk_go_v2_service_autoscaling//types",
         "@com_github_aws_aws_sdk_go_v2_service_eks//:eks",
         "@com_github_aws_aws_sdk_go_v2_service_eks//types",
         "@com_github_buildbarn_bb_storage//pkg/cloud/aws",
